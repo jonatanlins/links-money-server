@@ -29,7 +29,13 @@ class PageController {
   }
 
   async show({ params }) {
-    const page = await Page.findOrFail(params.id);
+    const page = await Page.query()
+      .where('id', params.id)
+      .with('owners')
+      .with('socialButtons')
+      .with('links')
+      .with('socialIntegrations')
+      .first();
 
     return page;
   }
