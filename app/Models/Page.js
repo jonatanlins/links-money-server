@@ -17,7 +17,7 @@ class Page extends Model {
   }
 
   socialIntegrations() {
-    return this.hasMany('App/Models/SocialIntegrations');
+    return this.hasMany('App/Models/SocialIntegration');
   }
 }
 

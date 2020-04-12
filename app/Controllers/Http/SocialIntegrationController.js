@@ -1,15 +1,43 @@
 'use strict';
 
+const SocialIntegration = use('App/Models/SocialIntegration');
+
 class SocialIntegrationController {
-  async index({ request, response, view }) {}
+  async index() {
+    const socialIntegrations = await SocialIntegration.all();
 
-  async create({ request, response, view }) {}
+    return socialIntegrations;
+  }
 
-  async show({ params, request, response, view }) {}
+  async store({ request }) {
+    const data = request.only(['type', 'social_id', 'page_id']);
 
-  async update({ params, request, response }) {}
+    const socialIntegration = await SocialIntegration.create(data);
 
-  async destroy({ params, request, response }) {}
+    return socialIntegration;
+  }
+
+  async show({ params }) {
+    const socialIntegration = await SocialIntegration.findOrFail(params.id);
+
+    return socialIntegration;
+  }
+
+  async update({ params, request }) {
+    const socialIntegration = await SocialIntegration.findOrFail(params.id);
+
+    const data = request.only(['type', 'social_id', 'page_id']);
+    socialIntegration.merge(data);
+    await socialIntegration.save();
+
+    return socialIntegration;
+  }
+
+  async destroy({ params }) {
+    const socialIntegration = await SocialIntegration.findOrFail(params.id);
+
+    await socialIntegration.delete();
+  }
 }
 
 module.exports = SocialIntegrationController;

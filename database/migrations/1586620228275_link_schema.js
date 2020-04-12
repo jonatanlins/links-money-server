@@ -8,6 +8,7 @@ class LinkSchema extends Schema {
     this.create('links', (table) => {
       table.increments();
 
+      table.string('type', 20).notNullable();
       table.string('thumbnail', 250).notNullable();
       table.string('link', 250).notNullable();
       table

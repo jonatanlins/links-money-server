@@ -1,15 +1,62 @@
 'use strict';
 
+const Page = use('App/Models/Page');
+
 class PageController {
-  async index({ request, response, view }) {}
+  async index() {
+    const pages = await Page.query()
+      .with('owners')
+      .with('socialButtons')
+      .with('links')
+      .with('socialIntegrations')
+      .fetch();
 
-  async create({ request, response, view }) {}
+    return pages;
+  }
 
-  async show({ params, request, response, view }) {}
+  async store({ request }) {
+    const data = request.only(['id', 'name', 'avatar', 'description']);
+    const { owners } = request.all();
 
-  async update({ params, request, response }) {}
+    const page = await Page.create(data);
 
-  async destroy({ params, request, response }) {}
+    if (owners && owners.length) {
+      await page.owners().attach(owners);
+      page.owners = await page.owners().fetch();
+    }
+
+    return page;
+  }
+
+  async show({ params }) {
+    const page = await Page.findOrFail(params.id);
+
+    return page;
+  }
+
+  async update({ params, request }) {
+    const page = await Page.findOrFail(params.id);
+
+    const data = request.only(['name', 'avatar', 'description']);
+    const { owners } = request.all();
+
+    page.merge(data);
+    await page.save();
+
+    if (owners && owners.length) {
+      await page.owners().detach();
+      await page.owners().attach(owners);
+      page.owners = await page.owners().fetch();
+    }
+
+    return page;
+  }
+
+  async destroy({ params }) {
+    const page = await Page.findOrFail(params.id);
+
+    await page.delete();
+  }
 }
 
 module.exports = PageController;
