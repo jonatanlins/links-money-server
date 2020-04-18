@@ -8,8 +8,8 @@ class PageSchema extends Schema {
     this.create('pages', (table) => {
       table.string('id', 40).notNullable().unique();
       table.string('name', 80).notNullable();
-      table.string('avatar', 254).notNullable();
-      table.string('description', 254).notNullable();
+      table.string('avatar', 300).notNullable();
+      table.string('description', 300).notNullable();
 
       table.timestamps();
     });

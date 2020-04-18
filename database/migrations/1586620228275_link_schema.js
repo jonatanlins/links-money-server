@@ -9,8 +9,8 @@ class LinkSchema extends Schema {
       table.increments();
 
       table.string('type', 20).notNullable();
-      table.string('thumbnail', 250).notNullable();
-      table.string('link', 250).notNullable();
+      table.string('thumbnail', 300).notNullable();
+      table.string('link', 300).notNullable();
       table
         .string('page_id', 40)
         .notNullable()

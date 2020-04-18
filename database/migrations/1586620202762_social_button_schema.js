@@ -12,7 +12,7 @@ class SocialButtonSchema extends Schema {
       table.string('icon', 30);
       table.string('color', 7).notNullable();
       table.string('gradient', 140);
-      table.string('link', 256).notNullable();
+      table.string('link', 300).notNullable();
       table.string('layout', 30);
       table
         .string('page_id', 40)
