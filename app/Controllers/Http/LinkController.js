@@ -10,7 +10,7 @@ class LinkController {
   }
 
   async store({ request }) {
-    const data = request.only(['type', 'thumbnail', 'link', 'page_id']);
+    const data = request.only(['type', 'social_id', 'link', 'page_id']);
 
     const link = await Link.create(data);
 
@@ -26,7 +26,7 @@ class LinkController {
   async update({ params, request }) {
     const link = await Link.findOrFail(params.id);
 
-    const data = request.only(['type', 'thumbnail', 'link', 'page_id']);
+    const data = request.only(['type', 'social_id', 'link', 'page_id']);
     link.merge(data);
     await link.save();
 
