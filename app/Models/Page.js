@@ -12,12 +12,8 @@ class Page extends Model {
     return this.hasMany('App/Models/SocialButton');
   }
 
-  links() {
-    return this.hasMany('App/Models/Link');
-  }
-
-  socialIntegrations() {
-    return this.hasMany('App/Models/SocialIntegration');
+  posts() {
+    return this.hasMany('App/Models/Post');
   }
 }
 

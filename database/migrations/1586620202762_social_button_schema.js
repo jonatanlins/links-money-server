@@ -14,9 +14,10 @@ class SocialButtonSchema extends Schema {
       table.string('gradient', 140);
       table.string('link', 300).notNullable();
       table.string('layout', 30);
+
       table
-        .string('page_id', 40)
-        .notNullable()
+        .integer('page_id')
+        .unsigned()
         .references('id')
         .inTable('pages')
         .onUpdate('CASCADE')

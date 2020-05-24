@@ -9,8 +9,7 @@ class PageController {
     const pages = await Page.query()
       .with('owners')
       .with('socialButtons')
-      .with('links')
-      .with('socialIntegrations')
+      .with('posts')
       .fetch();
 
     return pages;
@@ -74,7 +73,7 @@ class PageController {
       );
 
       const pageData = {
-        id: instagramData.data.username,
+        username: instagramData.data.username,
         name: instagramProfileData.data.graphql.user.full_name,
         avatar: instagramProfileData.data.graphql.user.profile_pic_url_hd,
         description: instagramProfileData.data.graphql.user.biography,
@@ -94,11 +93,10 @@ class PageController {
 
   async show({ params }) {
     const page = await Page.query()
-      .where('id', params.id)
+      .where('username', params.id)
       .with('owners')
       .with('socialButtons')
-      .with('links')
-      .with('socialIntegrations')
+      .with('posts')
       .first();
 
     return page;

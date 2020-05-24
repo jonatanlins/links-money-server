@@ -17,8 +17,8 @@ class UserPageSchema extends Schema {
         .onUpdate('CASCADE')
         .onDelete('CASCADE');
       table
-        .string('page_id', 40)
-        .notNullable()
+        .integer('page_id')
+        .unsigned()
         .references('id')
         .inTable('pages')
         .onUpdate('CASCADE')

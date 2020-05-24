@@ -1,10 +1,10 @@
 'use strict';
 
-const Link = use('App/Models/Link');
+const Post = use('App/Models/Link');
 
 class LinkController {
   async index() {
-    const links = await Link.all();
+    const links = await Post.all();
 
     return links;
   }
@@ -12,19 +12,19 @@ class LinkController {
   async store({ request }) {
     const data = request.only(['type', 'social_id', 'link', 'page_id']);
 
-    const link = await Link.create(data);
+    const link = await Post.create(data);
 
     return link;
   }
 
   async show({ params }) {
-    const link = await Link.findOrFail(params.id);
+    const link = await Post.findOrFail(params.id);
 
     return link;
   }
 
   async update({ params, request }) {
-    const link = await Link.findOrFail(params.id);
+    const link = await Post.findOrFail(params.id);
 
     const data = request.only(['type', 'social_id', 'link', 'page_id']);
     link.merge(data);
@@ -34,7 +34,7 @@ class LinkController {
   }
 
   async destroy({ params }) {
-    const link = await Link.findOrFail(params.id);
+    const link = await Post.findOrFail(params.id);
 
     await link.delete();
   }
