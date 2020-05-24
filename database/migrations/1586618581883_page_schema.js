@@ -10,6 +10,7 @@ class PageSchema extends Schema {
       table.string('name', 80).notNullable();
       table.string('avatar', 300).notNullable();
       table.string('description', 300).notNullable();
+      table.string('access_token', 200).notNullable();
 
       table.timestamps();
     });

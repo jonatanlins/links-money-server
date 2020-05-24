@@ -6,11 +6,12 @@ const Schema = use('Schema');
 class LinkSchema extends Schema {
   up() {
     this.create('links', (table) => {
-      table.increments();
+      table.string('id', 30).notNullable().unique();
+      table.string('caption', 300);
+      table.string('media_type', 20).notNullable();
+      table.string('media_url', 300).notNullable();
+      table.string('permalink', 100).notNullable();
 
-      table.string('type', 20).notNullable();
-      table.string('social_id', 40).notNullable();
-      table.string('link', 300).notNullable();
       table
         .string('page_id', 40)
         .notNullable()

@@ -1,6 +1,8 @@
 'use strict';
 
+const axios = require('axios');
 const Page = use('App/Models/Page');
+const querystring = require('querystring');
 
 class PageController {
   async index() {
@@ -14,18 +16,80 @@ class PageController {
     return pages;
   }
 
-  async store({ request }) {
-    const data = request.only(['id', 'name', 'avatar', 'description']);
-    const { owners } = request.all();
+  async store({ request, auth }) {
+    try {
+      const { code, redirect_uri } = request.all();
 
-    const page = await Page.create(data);
+      const client_id = '267533494431261';
+      const client_secret = '2713ceae590192fc74352870f8b9b2a4';
 
-    if (owners && owners.length) {
-      await page.owners().attach(owners);
+      const shortLivedAuth = await axios.post(
+        'https://api.instagram.com/oauth/access_token',
+        querystring.stringify({
+          client_id,
+          client_secret,
+          code,
+          grant_type: 'authorization_code',
+          redirect_uri,
+        })
+      );
+
+      const longLivedAuth = await axios.get(
+        'https://graph.instagram.com/access_token',
+        {
+          params: {
+            grant_type: 'ig_exchange_token',
+            client_secret,
+            access_token: shortLivedAuth.data.access_token,
+          },
+        }
+      );
+
+      const instagramData = await axios.get('https://graph.instagram.com/me', {
+        params: {
+          fields: 'id,username,media',
+          access_token: longLivedAuth.data.access_token,
+        },
+      });
+
+      const posts = await Promise.all(
+        instagramData.data.media.data.map(async (post) => {
+          const response = await axios.get(
+            `https://graph.instagram.com/${post.id}`,
+            {
+              params: {
+                fields:
+                  'id,caption,media_type,media_url,permalink,children,thumbnail_url',
+                access_token: longLivedAuth.data.access_token,
+              },
+            }
+          );
+
+          return response.data;
+        })
+      );
+
+      const instagramProfileData = await axios.get(
+        `https://www.instagram.com/${instagramData.data.username}/?__a=1`
+      );
+
+      const pageData = {
+        id: instagramData.data.username,
+        name: instagramProfileData.data.graphql.user.full_name,
+        avatar: instagramProfileData.data.graphql.user.profile_pic_url_hd,
+        description: instagramProfileData.data.graphql.user.biography,
+        access_token: longLivedAuth.data.access_token,
+      };
+
+      const page = await Page.create(pageData);
+      await page.owners().attach([1]);
       page.owners = await page.owners().fetch();
-    }
 
-    return page;
+      return page;
+    } catch (error) {
+      // console.log(error.response.data);
+      throw error;
+    }
   }
 
   async show({ params }) {
