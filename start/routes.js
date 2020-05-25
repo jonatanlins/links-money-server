@@ -8,10 +8,10 @@ Route.get('/', () => ({ status: 'working', version: '0.0.0' }));
 Route.post('/sessions', 'SessionController.store');
 Route.post('/users', 'UserController.store');
 
-Route.group(() => {
-  Route.resource('pages', 'PageController').apiOnly();
+Route.resource('pages', 'PageController').apiOnly();
 
-  Route.resource('links', 'LinkController').apiOnly();
+Route.group(() => {
+  Route.resource('posts', 'PostController').apiOnly();
 
   Route.resource('social-buttons', 'SocialButtonController').apiOnly();
 

@@ -1,8 +1,10 @@
 'use strict';
 
 const axios = require('axios');
-const Page = use('App/Models/Page');
 const querystring = require('querystring');
+
+const Page = use('App/Models/Page');
+const Post = use('App/Models/Post');
 
 class PageController {
   async index() {
@@ -51,6 +53,18 @@ class PageController {
         },
       });
 
+      const instagramProfileData = await axios.get(
+        `https://www.instagram.com/${instagramData.data.username}/?__a=1`
+      );
+
+      const pageData = {
+        username: instagramData.data.username,
+        name: instagramProfileData.data.graphql.user.full_name,
+        avatar: instagramProfileData.data.graphql.user.profile_pic_url_hd,
+        description: instagramProfileData.data.graphql.user.biography,
+        access_token: longLivedAuth.data.access_token,
+      };
+
       const posts = await Promise.all(
         instagramData.data.media.data.map(async (post) => {
           const response = await axios.get(
@@ -68,25 +82,30 @@ class PageController {
         })
       );
 
-      const instagramProfileData = await axios.get(
-        `https://www.instagram.com/${instagramData.data.username}/?__a=1`
-      );
-
-      const pageData = {
-        username: instagramData.data.username,
-        name: instagramProfileData.data.graphql.user.full_name,
-        avatar: instagramProfileData.data.graphql.user.profile_pic_url_hd,
-        description: instagramProfileData.data.graphql.user.biography,
-        access_token: longLivedAuth.data.access_token,
-      };
-
       const page = await Page.create(pageData);
       await page.owners().attach([1]);
       page.owners = await page.owners().fetch();
 
+      await Promise.all(
+        posts.map(async (post) => {
+          const data = {
+            post_id: post.id,
+            caption: post.caption,
+            media_type: post.media_type,
+            media_url: post.thumbnail_url || post.media_url,
+            permalink: post.permalink,
+            page_id: page.id,
+          };
+
+          return await Post.create(data);
+        })
+      );
+
+      page.posts = await page.posts().fetch();
+
       return page;
     } catch (error) {
-      // console.log(error.response.data);
+      console.log(error.response.data);
       throw error;
     }
   }

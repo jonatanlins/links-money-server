@@ -13,6 +13,7 @@ class LinkSchema extends Schema {
       table.string('media_type', 20).notNullable();
       table.string('media_url', 300).notNullable();
       table.string('permalink', 100).notNullable();
+      table.string('link', 300);
 
       table
         .integer('page_id')
